@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>จำนวนผู้เสียชีวิตจากการรับน้องของนักศึกษาระดับอุดมศึกษา</title>
+		<h1>จำนวนผู้เสียชีวิตจากการรับน้องของนักศึกษาระดับอุดมศึกษา ปี 2005 - 2014</h1>
+        <script type="text/javascript" src="https://cdn.rawgit.com/mbostock/d3/master/d3.min.js"></script>
+    </head>
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.area {
+  fill: red;
+}
+
+</style>
+<body>
+<script>
+
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var parseDate = d3.time.format("%d-%b-%y").parse;
+
+var x = d3.time.scale()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var area = d3.svg.area()
+    .x(function(d) { return x(d.Year); })
+    .y0(height)
+    .y1(function(d) { return y(d.Dead); });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var data = [
+  {Year: "1-Jan-05", Dead: 9},
+  {Year: "1-Jan-06", Dead: 12},
+  {Year: "1-Jan-07", Dead: 15},
+  {Year: "1-Jan-08", Dead: 24},
+  {Year: "1-Jan-09", Dead: 39},
+  {Year: "1-Jan-10", Dead: 67},
+  {Year: "1-Jan-11", Dead: 90},
+  {Year: "1-Jan-12", Dead: 112},
+  {Year: "1-Jan-13", Dead: 131},
+  {Year: "1-Jan-14", Dead: 167}
+];	
+	
+  data.forEach(function(d) {
+    d.Year = parseDate(d.Year);
+    d.Dead = +d.Dead;
+  });
+
+  x.domain(d3.extent(data, function(d) { return d.Year; }));
+  y.domain([0, d3.max(data, function(d) { return d.Dead; })]);
+
+  svg.append("path")
+      .datum(data)
+      .attr("class", "area")
+      .attr("d", area);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("จำนวนผู้เสียชีวิต");
+
+</script>
